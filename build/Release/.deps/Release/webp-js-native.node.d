@@ -1,0 +1,1 @@
+cmd_Release/webp-js-native.node := ln -f "Release/obj.target/webp-js-native.node" "Release/webp-js-native.node" 2>/dev/null || (rm -rf "Release/webp-js-native.node" && cp -af "Release/obj.target/webp-js-native.node" "Release/webp-js-native.node")
