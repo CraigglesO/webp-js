@@ -74,12 +74,9 @@ Napi::Object DecodeRGB(const Napi::CallbackInfo& info) {
   if (webpData == NULL) {
     obj.Set(Napi::String::New(env, "buffer"), NULL);
   } else {
-    // make a copy and cleanup
-    uint8_t* cpy;
-    cpy = new uint8_t[length];
-    memcpy(cpy, webpData, length);
-    obj.Set(Napi::String::New(env, "buffer"), Napi::ArrayBuffer::New(env, cpy, length));
-    WebPFree(webpData);
+    obj.Set(Napi::String::New(env, "buffer"), Napi::ArrayBuffer::New(env, webpData, length, [](Env /*env*/, void* finalizeData) {
+      WebPFree(finalizeData);
+    }));
   }
   obj.Set(Napi::String::New(env, "width"), Napi::Number::New(env, width));
   obj.Set(Napi::String::New(env, "height"), Napi::Number::New(env, height));
@@ -121,12 +118,9 @@ Napi::Object DecodeRGBA(const Napi::CallbackInfo& info) {
   if (webpData == NULL) {
     obj.Set(Napi::String::New(env, "buffer"), NULL);
   } else {
-    // make a copy and cleanup
-    uint8_t* cpy;
-    cpy = new uint8_t[length];
-    memcpy(cpy, webpData, length);
-    obj.Set(Napi::String::New(env, "buffer"), Napi::ArrayBuffer::New(env, cpy, length));
-    WebPFree(webpData);
+    obj.Set(Napi::String::New(env, "buffer"), Napi::ArrayBuffer::New(env, webpData, length, [](Env /*env*/, void* finalizeData) {
+      WebPFree(finalizeData);
+    }));
   }
   obj.Set(Napi::String::New(env, "width"), Napi::Number::New(env, width));
   obj.Set(Napi::String::New(env, "height"), Napi::Number::New(env, height));
@@ -177,11 +171,9 @@ Napi::ArrayBuffer EncodeRGB(const Napi::CallbackInfo& info) {
 
   encodedSize = WebPEncodeRGB(rgb, width, height, width * 3, quality_factor, &output);
 
-  uint8_t* cpy;
-  cpy = new uint8_t[encodedSize];
-  memcpy(cpy, output, encodedSize);
-  WebPFree(output);
-  return Napi::ArrayBuffer::New(env, cpy, encodedSize);
+  return Napi::ArrayBuffer::New(env, output, encodedSize, [](Env /*env*/, void* finalizeData) {
+    WebPFree(finalizeData);
+  });
 }
 
 
@@ -228,11 +220,9 @@ Napi::ArrayBuffer EncodeRGBA(const Napi::CallbackInfo& info) {
 
   encodedSize = WebPEncodeRGBA(rgba, width, height, width * 4, quality_factor, &output);
 
-  uint8_t* cpy;
-  cpy = new uint8_t[encodedSize];
-  memcpy(cpy, output, encodedSize);
-  WebPFree(output);
-  return Napi::ArrayBuffer::New(env, cpy, encodedSize);
+  return Napi::ArrayBuffer::New(env, output, encodedSize, [](Env /*env*/, void* finalizeData) {
+    WebPFree(finalizeData);
+  });
 }
 
 Napi::ArrayBuffer EncodeLosslessRGB(const Napi::CallbackInfo& info) {
@@ -272,11 +262,9 @@ Napi::ArrayBuffer EncodeLosslessRGB(const Napi::CallbackInfo& info) {
 
   encodedSize = WebPEncodeLosslessRGB(rgb, width, height, width * 3, &output);
 
-  uint8_t* cpy;
-  cpy = new uint8_t[encodedSize];
-  memcpy(cpy, output, encodedSize);
-  WebPFree(output);
-  return Napi::ArrayBuffer::New(env, cpy, encodedSize);
+  return Napi::ArrayBuffer::New(env, output, encodedSize, [](Env /*env*/, void* finalizeData) {
+    WebPFree(finalizeData);
+  });
 }
 
 Napi::ArrayBuffer EncodeLosslessRGBA(const Napi::CallbackInfo& info) {
@@ -316,11 +304,9 @@ Napi::ArrayBuffer EncodeLosslessRGBA(const Napi::CallbackInfo& info) {
 
   encodedSize = WebPEncodeLosslessRGBA(rgba, width, height, width * 4, &output);
 
-  uint8_t* cpy;
-  cpy = new uint8_t[encodedSize];
-  memcpy(cpy, output, encodedSize);
-  WebPFree(output);
-  return Napi::ArrayBuffer::New(env, cpy, encodedSize);
+  return Napi::ArrayBuffer::New(env, output, encodedSize, [](Env /*env*/, void* finalizeData) {
+    WebPFree(finalizeData);
+  });
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
